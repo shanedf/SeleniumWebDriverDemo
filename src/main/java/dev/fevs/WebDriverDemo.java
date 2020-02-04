@@ -32,12 +32,9 @@ public class WebDriverDemo {
             e.printStackTrace();
         }
 
-
-
         if (resultSets != null) {
                 Map<String, Map<String, TestResult>> resultMap =
                 resultSets.stream()
-                        //.map(res -> res.get().getValue0())
                         .collect(Collectors.toMap(l -> {
                             try {
                                 return l.get().getValue0();
@@ -56,21 +53,13 @@ public class WebDriverDemo {
                 showResult(resultMap);
         }
 
-
-        /*resultSets.forEach((resultSet) -> {
-            try {
-                Pair<String, Map<String, TestResult>> result = resultSet.get();
-                resultMap.put(result.getValue0(), result.getValue1());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        });*/
-
-        //showResult(resultMap);
-
     }
 
+    // https://stackoverflow.com/questions/15215326/how-can-i-create-table-using-ascii-in-a-console
     static void showResult(Map<String, Map<String, TestResult>> testResults) {
+        final String H_BORDER = "-";
+        final String V_BORDER = "|";
+        final String SPACER = " ";
         final String ANSI_RESET = "\u001B[0m";
         final String ANSI_GREEN = "\u001B[32m";
         final String ANSI_RED_BACKGROUND = "\u001B[41m";
@@ -78,12 +67,12 @@ public class WebDriverDemo {
         List<String> uniqueTestKeys = testResults.values().stream().map(Map::keySet).flatMap(Set::stream).collect(Collectors.toList());
         int maxTestKeyLength = Collections.max(uniqueTestKeys, Comparator.comparing(String::length)).length();
         System.out.println(maxTestKeyLength);
-
-        if (!testResults.getValue1().isEmpty()) {
-            System.out.println("-|----------------------------------------|\n**** " + testResults.getValue0().toUpperCase());
-            testResults.getValue1().forEach(((testKey, testResult) -> {
+        if (!platforms.isEmpty()) {
+            System.out.println(H_BORDER.repeat(maxTestKeyLength + 2) + (H_BORDER.repeat(11)).repeat(platforms.size()));
+            System.out.println(V_BORDER + SPACER.repeat(maxTestKeyLength) + V_BORDER + (SPACER.repeat(10) + V_BORDER).repeat(platforms.size()));
+            /*testResults.getValue1().forEach(((testKey, testResult) -> {
                 System.out.println(testKey + " // " + (testResult.result() ? (ANSI_GREEN + "PASSED") : (ANSI_RED_BACKGROUND + "FAILED")) + ANSI_RESET);
-            }));
+            }));*/
         } else {
             System.out.println(ANSI_RED_BACKGROUND + "One of the test suites returned no results!" + ANSI_RESET);
         }
